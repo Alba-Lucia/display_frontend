@@ -1,0 +1,107 @@
+import { useEffect, useState } from "react";
+import { Calendar, List, Plus, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { getProductList } from "../services/productList";
+
+type Item = {
+  id: number;
+  product: { name: string; expirationDate: string; inDisplay?: boolean };
+  quantity: number;
+  createdAt: string;
+};
+
+function normalizeDate(date: Date): Date {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+export default function Home() {
+  const [items, setItems] = useState<Item[]>([]);
+
+  useEffect(() => {
+    getProductList()
+      .then(setItems)
+      .catch(console.error);
+  }, []);
+
+  const today = normalizeDate(new Date());
+
+  const expiredMoreThan4Days = items.filter((item) => {
+    const expirationDate = normalizeDate(new Date(item.product.expirationDate));
+    const createdAtDate = normalizeDate(new Date(item.createdAt));
+
+    // Excluir productos agregados hoy
+    if (createdAtDate.getTime() === today.getTime()) return false;
+
+    // Calcular diferencia entre hoy y fecha de expiración
+    const diffTime = today.getTime() - expirationDate.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 120));
+    return diffDays > 5;
+  }).length;
+
+  const addedToday = items.filter((item) => {
+    const createdAtDate = normalizeDate(new Date(item.createdAt));
+    return createdAtDate.getTime() === today.getTime();
+  }).length;
+
+  const inDisplay = items.filter((item) => {
+    const expirationDate = normalizeDate(new Date(item.product.expirationDate));
+    return expirationDate < today;
+  }).length;
+
+  return (
+    <main className="px-4 space-y-6 bg-muted min-h-screen">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div className="bg-red-100 rounded-2xl p-6 text-center">
+          <p className="text-6xl font-bold text-red-500">{expiredMoreThan4Days}</p>
+          <p className="text-sm text-dark mt-1">Expired products +4 days</p>
+        </div>
+
+        <div className="bg-green-100 rounded-2xl p-6 text-center">
+          <p className="text-6xl font-bold text-green-600">{addedToday}</p>
+          <p className="text-sm text-dark mt-1">Added today</p>
+        </div>
+
+        <div className="col-span-2 sm:col-span-1 bg-blue-100 rounded-2xl p-6 text-center">
+          <p className="text-6xl font-bold text-blue-600">{inDisplay}</p>
+          <p className="text-sm text-dark mt-1">In Display</p>
+        </div>
+      </div>
+
+      {/* Resto contenido */}
+      <h2 className="text-xl font-semibold text-dark mt-6">Display products</h2>
+      <Link
+        to="productListPage"
+        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-white bg-primary font-medium hover:bg-primary/90 transition"
+      >
+        <span className="text-lg">🎁</span>
+        Add Item to Display or Baked Products
+      </Link>
+      <button className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-primary text-primary rounded-2xl font-medium hover:bg-blue-50 transition">
+        <Plus />
+        Order list garage
+      </button>
+      <div className="space-y-4 mt-4">
+        <Link
+          to="productListDisplay"
+          className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl bg-white border border-gray-300 text-dark hover:bg-muted transition"
+        >
+          <Calendar />
+          Products list display
+        </Link>
+        <Link
+          to="ProductListCategory"
+          className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl bg-white border border-gray-300 text-dark hover:bg-muted transition"
+        >
+          <List />
+          Product List Category
+        </Link>
+        <button className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl bg-white border border-gray-300 text-dark hover:bg-muted transition">
+          <Trash2 />
+          Garbage
+        </button>
+      </div>
+    </main>
+  );
+}
