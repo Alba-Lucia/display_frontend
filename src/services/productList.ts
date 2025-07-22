@@ -34,7 +34,7 @@ export const updateProductInList = async (
 
 // Eliminar producto
 export const deleteProductFromList = async (id: number) => {
-  const res = await axios.delete(`${API_URL}/product-list/${id}`);
+  const res = await axios.delete(`${API_URL}/product-list/api/${id}`);
   return res.data;
 };
 
