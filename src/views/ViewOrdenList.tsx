@@ -18,11 +18,14 @@ const productsByCategory: Record<string, string[]> = {
 };
 
 export const ViewOrdenList = () => {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(initialSelected);
+  const [selectedCategories, setSelectedCategories] =
+    useState<string[]>(initialSelected);
 
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
     );
   };
 
@@ -43,8 +46,6 @@ export const ViewOrdenList = () => {
   return (
     <div className="max-w-md mx-auto p-4 bg-white min-h-screen flex flex-col justify-between">
       <div>
-        
-
         {/* Categories */}
         <div>
           <h2 className="text-sm font-medium mb-2">Categories</h2>

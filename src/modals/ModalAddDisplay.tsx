@@ -1,6 +1,4 @@
 // src/components/AddToStoreModal.tsx
-import React from "react";
-
 type Props = {
   productName: string;
   quantity: number;

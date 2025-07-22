@@ -1,6 +1,4 @@
 // components/EditModal.tsx
-import React from "react";
-
 interface EditModalProps {
   productName: string;
   quantity: number;

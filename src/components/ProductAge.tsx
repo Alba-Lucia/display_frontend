@@ -1,5 +1,3 @@
-import React from 'react';
-
 function ProductAge() {
   const calculateAge = () => {
     const now = new Date();
