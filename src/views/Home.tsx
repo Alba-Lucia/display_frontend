@@ -19,9 +19,19 @@ function normalizeDate(date: Date): Date {
 export default function Home() {
   const [items, setItems] = useState<Item[]>([]);
 
-  useEffect(() => {
-    getProductList().then(setItems).catch(console.error);
-  }, []);
+useEffect(() => {
+  getProductList()
+    .then((data) => {
+      if (Array.isArray(data)) {
+        setItems(data);
+      } else {
+        console.error("getProductList() did not return an array:", data);
+        setItems([]); // fallback vacío
+      }
+    })
+    .catch(console.error);
+}, []);
+
 
   const today = normalizeDate(new Date());
 
