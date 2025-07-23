@@ -29,8 +29,9 @@ export const updateProductInList = async (
   data: { quantity: number; createdAt?: string }
 ) => {
   const res = await axios.put(`${API_URL}/api/product-list/${id}`, data);
-  return res.data;
+  return res.data.data;  // acceder a data dentro del objeto recibido
 };
+
 
 // Eliminar producto
 export const deleteProductFromList = async (id: number) => {

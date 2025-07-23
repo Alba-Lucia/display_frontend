@@ -4,10 +4,7 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { updateProductInList } from "../services/productList";
 
-// ----------------------
-// API de edición
-// ----------------------
-const API_URL = "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface Product {
   id: number;
@@ -23,10 +20,7 @@ interface Product {
 
 const formatDate = (isoDate: string) => {
   const [year, month, day] = isoDate.split("T")[0].split("-").map(Number);
-
-  // Creamos una fecha local SIN que JS la ajuste por zona horaria
   const localDate = new Date(year, month - 1, day);
-
   return localDate.toLocaleDateString("es-ES", {
     day: "numeric",
     month: "long",
@@ -36,18 +30,8 @@ const formatDate = (isoDate: string) => {
 const calculateStatusLabel = (createdAt: string): string => {
   const today = new Date();
   const createdDate = new Date(createdAt);
-
-  const todayMidnight = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  );
-  const createdMidnight = new Date(
-    createdDate.getFullYear(),
-    createdDate.getMonth(),
-    createdDate.getDate()
-  );
-
+  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const createdMidnight = new Date(createdDate.getFullYear(), createdDate.getMonth(), createdDate.getDate());
   const diffTime = todayMidnight.getTime() - createdMidnight.getTime();
   const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
@@ -79,9 +63,6 @@ const getStatusColor = (status: string): string => {
   }
 };
 
-// ----------------------
-// Componente principal
-// ----------------------
 const ProductListPage = () => {
   const [productList, setProductList] = useState<Product[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -93,9 +74,14 @@ const ProductListPage = () => {
     const fetchProductList = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/product-list`);
-        setProductList(response.data);
+        if (!Array.isArray(response.data)) {
+          console.error("❌ La respuesta no es un array:", response.data);
+          setProductList([]);
+        } else {
+          setProductList(response.data);
+        }
       } catch (error) {
-        console.error("Error al obtener la lista de productos:", error);
+        console.error("Error al obtener productos:", error);
       }
     };
 
@@ -103,16 +89,15 @@ const ProductListPage = () => {
   }, []);
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm("¿Estás segura de que deseas eliminar este producto?"))
-      return;
+    if (!window.confirm("¿Eliminar este producto?")) return;
 
     try {
       await axios.delete(`${API_URL}/api/product-list/${id}`);
       setProductList((prev) => prev.filter((item) => item.id !== id));
-      toast.success("Producto eliminado correctamente");
+      toast.success("Producto eliminado");
     } catch (error) {
-      console.error("Error eliminando el producto:", error);
-      alert("No se pudo eliminar el producto");
+      console.error("Error eliminando:", error);
+      toast.error("No se pudo eliminar");
     }
   };
 
@@ -134,7 +119,7 @@ const ProductListPage = () => {
     try {
       await updateProductInList(selectedProduct.id, {
         quantity: editedQuantity,
-        createdAt: editedDate, // ← evita convertirla a ISO
+        createdAt: editedDate,
       });
 
       setProductList((prev) =>
@@ -148,25 +133,20 @@ const ProductListPage = () => {
       toast.success("Producto actualizado");
       closeModal();
     } catch (error) {
-      console.error("Error al guardar edición:", error);
+      console.error("Error al editar:", error);
       toast.error("No se pudo actualizar");
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-2xl font-semibold mb-4">
-        📋 Lista de productos asignados
-      </h1>
-
-      <Link to="/" className="text-blue-600 mb-4 inline-block">
-        ← Go back
-      </Link>
+      <h1 className="text-2xl font-semibold mb-4">📋 Lista de productos asignados</h1>
+      <Link to="/" className="text-blue-600 mb-4 inline-block">← Regresar</Link>
 
       <div className="grid grid-cols-4 text-m font-semibold text-gray-600 mb-3 p-4 bg-gray-200 rounded-sm ">
         <div>Producto</div>
         <div className="text-center">Cantidad</div>
-        <div className="text-center">Fecha de asignación</div>
+        <div className="text-center">Fecha</div>
         <div className="text-center">Estado</div>
       </div>
 
@@ -176,19 +156,13 @@ const ProductListPage = () => {
           return (
             <div
               key={item.id}
-              className=" rounded-lg border hover:shadow-sm rounded-2xl bg-white border border-gray-300 duration-200 p-4 grid grid-cols-4 items-center text-sm text-gray-700 relative group"
+              className="rounded-2xl border bg-white border-gray-300 p-4 grid grid-cols-4 items-center text-sm text-gray-700 relative group hover:shadow-sm"
             >
               <div className="font-medium">{item.product.name}</div>
-              <div className="text-center">
-                {item.quantity} {item.product.unit || "un"}
-              </div>
+              <div className="text-center">{item.quantity} {item.product.unit || "un"}</div>
               <div className="text-center">{formatDate(item.createdAt)}</div>
               <div className="text-center">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                    status
-                  )}`}
-                >
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(status)}`}>
                   {status}
                 </span>
               </div>
@@ -196,16 +170,10 @@ const ProductListPage = () => {
               <div className="absolute right-4">
                 <button className="peer text-xl px-2 cursor-pointer">⁝</button>
                 <div className="hidden peer-hover:flex hover:flex flex-col absolute right-0 top-6 bg-white border border-gray-300 rounded-md shadow-md z-10">
-                  <button
-                    className="px-4 py-2 text-sm hover:bg-gray-100 text-left"
-                    onClick={() => openEditModal(item)}
-                  >
+                  <button className="px-4 py-2 text-sm hover:bg-gray-100 text-left" onClick={() => openEditModal(item)}>
                     Editar
                   </button>
-                  <button
-                    className="px-4 py-2 text-sm hover:bg-gray-100 text-left text-red-600"
-                    onClick={() => handleDelete(item.id)}
-                  >
+                  <button className="px-4 py-2 text-sm hover:bg-gray-100 text-left text-red-600" onClick={() => handleDelete(item.id)}>
                     Eliminar
                   </button>
                 </div>
@@ -215,18 +183,13 @@ const ProductListPage = () => {
         })}
       </div>
 
-      {/* Modal de edición */}
       {modalOpen && selectedProduct && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-            <h2 className="text-lg font-semibold mb-4">
-              Edit: {selectedProduct.product.name}
-            </h2>
+            <h2 className="text-lg font-semibold mb-4">Editar: {selectedProduct.product.name}</h2>
 
             <div className="mb-3">
-              <label className="block mb-1 text-sm text-gray-600">
-                Quantity:
-              </label>
+              <label className="block mb-1 text-sm text-gray-600">Cantidad:</label>
               <input
                 type="number"
                 value={editedQuantity}
@@ -236,9 +199,7 @@ const ProductListPage = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block mb-1 text-sm text-gray-600">
-                Fecha de asignación:
-              </label>
+              <label className="block mb-1 text-sm text-gray-600">Fecha de asignación:</label>
               <input
                 type="date"
                 value={editedDate}
@@ -248,17 +209,11 @@ const ProductListPage = () => {
             </div>
 
             <div className="flex justify-end space-x-2">
-              <button
-                onClick={closeModal}
-                className="bg-blue-100 text-blue-700 px-4 py-2 rounded  hover:bg-blue-200 w-full"
-              >
+              <button onClick={closeModal} className="bg-blue-100 text-blue-700 px-4 py-2 rounded hover:bg-blue-200 w-full">
                 Cancelar
               </button>
-              <button
-                onClick={handleSaveEdit}
-                className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded hover:bg-yellow-200 w-full"
-              >
-                Save
+              <button onClick={handleSaveEdit} className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded hover:bg-yellow-200 w-full">
+                Guardar
               </button>
             </div>
           </div>
