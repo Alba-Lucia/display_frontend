@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 import { updateProductInList } from "../services/productList";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -77,6 +77,7 @@ const ProductListPage = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [editedQuantity, setEditedQuantity] = useState<number>(0);
   const [editedDate, setEditedDate] = useState<string>("");
+const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchProductList = async () => {
@@ -146,7 +147,6 @@ const ProductListPage = () => {
     }
   };
 
-const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
 const toggleMenu = (id: number) => {
   setOpenMenuId((prevId) => (prevId === id ? null : id));
