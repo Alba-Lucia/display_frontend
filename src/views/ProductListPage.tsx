@@ -192,7 +192,7 @@ const ProductListPage = () => {
                 </span>
               </div>
 
-              <div className="absolute right-4">
+              <div className="absolute right-4 p-2">
                 <button
                   className="peer text-xl p-2 cursor-pointer"
                   onClick={() => toggleMenu(item.id)}
