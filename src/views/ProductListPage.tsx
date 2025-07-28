@@ -23,7 +23,7 @@ const formatDate = (isoDate: string) => {
   const localDate = new Date(year, month - 1, day);
   return localDate.toLocaleDateString("es-ES", {
     day: "numeric",
-    month: "long",
+    month: "short",
   });
 };
 
@@ -169,7 +169,7 @@ const ProductListPage = () => {
         <div className="text-center">Estado</div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2 ">
         {productList.map((item) => {
           const statu = calculateStatusLabel(item.createdAt);
           return (
@@ -182,9 +182,9 @@ const ProductListPage = () => {
                 {item.quantity} {item.product.unit || "un"}
               </div>
               <div className="text-center">{formatDate(item.createdAt)}</div>
-              <div className="text-center mr-2">
+              <div className="text-center ">
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                  className={`px-3 mr-4 py-1 rounded-full text-xs font-semibold ${getStatusColor(
                     statu
                   )}`}
                 >
@@ -192,7 +192,7 @@ const ProductListPage = () => {
                 </span>
               </div>
 
-              <div className="absolute right-4">
+              <div className="absolute right-1">
                 <button
                   className="peer text-xl p-2 cursor-pointer"
                   onClick={() => toggleMenu(item.id)}
@@ -275,7 +275,6 @@ const ProductListPage = () => {
           </div>
         </div>
       )}
-      <p>Actualizar</p>
     </div>
   );
 };
