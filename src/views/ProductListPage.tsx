@@ -192,13 +192,13 @@ const ProductListPage = () => {
 
               <div className="absolute right-4">
                 <button
-                  className="peer text-xl px-2 cursor-pointer"
+                  className="peer text-xl p-2 cursor-pointer"
                   onClick={toggleMenu}
                 >
                   ⁝
                 </button>
                 {isOpen && (
-                  <div className="hidden peer-hover:flex hover:flex flex-col absolute right-0 top-6 bg-white border border-gray-300 rounded-md shadow-md z-10">
+                  <div className=" absolute right-0 top-6 bg-white border border-gray-300 rounded-md shadow-md z-10">
                     <button
                       className="px-4 py-2 text-sm hover:bg-gray-100 text-left"
                       onClick={() => openEditModal(item)}
