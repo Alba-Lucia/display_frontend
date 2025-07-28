@@ -268,7 +268,7 @@ const ProductListPage = () => {
           </div>
         </div>
       )}
-      <p>Actualizando</p>
+      <p>Actaulizar</p>
     </div>
   );
 };
