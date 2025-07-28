@@ -217,7 +217,6 @@ const ProductListPage = () => {
             </div>
           );
         })}
-        
       </div>
 
       {modalOpen && selectedProduct && (
@@ -270,7 +269,6 @@ const ProductListPage = () => {
       )}
       <p>Actualizar</p>
     </div>
-
   );
 };
 
