@@ -79,9 +79,11 @@ const ProductListPage = () => {
   const [editedQuantity, setEditedQuantity] = useState<number>(0);
   const [editedDate, setEditedDate] = useState<string>("");
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
-  const toggleMenu = () => setIsOpen((prev) => !prev);
+  const toggleMenu = (id: number) => {
+    setOpenMenuId((prev) => (prev === id ? null : id));
+  };
 
   useEffect(() => {
     const fetchProductList = async () => {
@@ -193,21 +195,27 @@ const ProductListPage = () => {
               <div className="absolute right-4">
                 <button
                   className="peer text-xl p-2 cursor-pointer"
-                  onClick={toggleMenu}
+                  onClick={() => toggleMenu(item.id)}
                 >
                   ⁝
                 </button>
-                {isOpen && (
-                  <div className=" absolute right-0 top-6 bg-white border border-gray-300 rounded-md shadow-md z-10">
+                {openMenuId === item.id && (
+                  <div className="absolute right-0 top-6 bg-white border border-gray-300 rounded-md shadow-md z-10">
                     <button
                       className="px-4 py-2 text-sm hover:bg-gray-100 text-left"
-                      onClick={() => openEditModal(item)}
+                      onClick={() => {
+                        openEditModal(item);
+                        setOpenMenuId(null); // Cierra el menú al hacer clic
+                      }}
                     >
                       Editar
                     </button>
                     <button
                       className="px-4 py-2 text-sm hover:bg-gray-100 text-left text-red-600"
-                      onClick={() => handleDelete(item.id)}
+                      onClick={() => {
+                        handleDelete(item.id);
+                        setOpenMenuId(null); // Cierra el menú al hacer clic
+                      }}
                     >
                       Eliminar
                     </button>
