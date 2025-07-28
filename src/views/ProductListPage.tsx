@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import axios from "axios";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import { updateProductInList } from "../services/productList";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -74,10 +74,14 @@ const getStatusColor = (status: string): string => {
 const ProductListPage = () => {
   const [productList, setProductList] = useState<Product[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
+
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [editedQuantity, setEditedQuantity] = useState<number>(0);
   const [editedDate, setEditedDate] = useState<string>("");
-const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => setIsOpen((prev) => !prev);
 
   useEffect(() => {
     const fetchProductList = async () => {
@@ -147,13 +151,6 @@ const [openMenuId, setOpenMenuId] = useState<number | null>(null);
     }
   };
 
-
-const toggleMenu = (id: number) => {
-  setOpenMenuId((prevId) => (prevId === id ? null : id));
-};
-
-const closeMenu = () => setOpenMenuId(null);
-
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-2xl font-semibold mb-4">
@@ -172,7 +169,7 @@ const closeMenu = () => setOpenMenuId(null);
 
       <div className="space-y-2">
         {productList.map((item) => {
-          const status = calculateStatusLabel(item.createdAt);
+          const statu = calculateStatusLabel(item.createdAt);
           return (
             <div
               key={item.id}
@@ -186,64 +183,41 @@ const closeMenu = () => setOpenMenuId(null);
               <div className="text-center">
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                    status
+                    statu
                   )}`}
                 >
-                  {status}
+                  {statu}
                 </span>
               </div>
 
               <div className="absolute right-4">
-              {productList.map((item) => {
-  const status = calculateStatusLabel(item.createdAt);
-  const isMenuOpen = openMenuId === item.id;
-
-  return (
-    <div
-      key={item.id}
-      className="... relative group hover:shadow-sm"
-    >
-      {/* ... contenido ... */}
-
-      <div className="absolute right-4">
-        <button
-          className="peer text-xl px-2 cursor-pointer"
-          onClick={() => toggleMenu(item.id)}
-        >
-          ⁝
-        </button>
-
-        {isMenuOpen && (
-          <div className="flex flex-col absolute right-0 top-6 bg-white border border-gray-300 rounded-md shadow-md z-10">
-            <button
-              className="px-4 py-2 text-sm text-left hover:bg-gray-100"
-              onClick={() => {
-                openEditModal(item);
-                closeMenu();
-              }}
-            >
-              Editar
-            </button>
-            <button
-              className="px-4 py-2 text-sm text-left text-red-600 hover:bg-gray-100"
-              onClick={() => {
-                handleDelete(item.id);
-                closeMenu();
-              }}
-            >
-              Eliminar
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-})}
-
+                <button
+                  className="peer text-xl px-2 cursor-pointer"
+                  onClick={toggleMenu}
+                >
+                  ⁝
+                </button>
+                {isOpen && (
+                  <div className="hidden peer-hover:flex hover:flex flex-col absolute right-0 top-6 bg-white border border-gray-300 rounded-md shadow-md z-10">
+                    <button
+                      className="px-4 py-2 text-sm hover:bg-gray-100 text-left"
+                      onClick={() => openEditModal(item)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="px-4 py-2 text-sm hover:bg-gray-100 text-left text-red-600"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           );
         })}
+        
       </div>
 
       {modalOpen && selectedProduct && (
@@ -294,6 +268,7 @@ const closeMenu = () => setOpenMenuId(null);
           </div>
         </div>
       )}
+      <p>Actualizando</p>
     </div>
   );
 };
