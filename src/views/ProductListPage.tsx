@@ -182,7 +182,7 @@ const ProductListPage = () => {
                 {item.quantity} {item.product.unit || "un"}
               </div>
               <div className="text-center">{formatDate(item.createdAt)}</div>
-              <div className="text-center">
+              <div className="text-center mr-2">
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
                     statu
@@ -192,7 +192,7 @@ const ProductListPage = () => {
                 </span>
               </div>
 
-              <div className="absolute right-4 p-2">
+              <div className="absolute right-4">
                 <button
                   className="peer text-xl p-2 cursor-pointer"
                   onClick={() => toggleMenu(item.id)}
