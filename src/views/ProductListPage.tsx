@@ -27,31 +27,61 @@ const formatDate = (isoDate: string) => {
   });
 };
 
-const calculateStatusLabel = (createdAt: string): string => {
-  const today = new Date();
-  const createdDate = new Date(createdAt);
-  const todayMidnight = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  );
-  const createdMidnight = new Date(
-    createdDate.getFullYear(),
-    createdDate.getMonth(),
-    createdDate.getDate()
-  );
-  const diffTime = todayMidnight.getTime() - createdMidnight.getTime();
-  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+// const calculateStatusLabel = (createdAt: string): string => {
+//   const today = new Date();
+//   const createdDate = new Date(createdAt);
+//   const todayMidnight = new Date(
+//     today.getFullYear(),
+//     today.getMonth(),
+//     today.getDate()
+//   );
+//   const createdMidnight = new Date(
+//     createdDate.getFullYear(),
+//     createdDate.getMonth(),
+//     createdDate.getDate()
+//   );
+//   const diffTime = todayMidnight.getTime() - createdMidnight.getTime();
+//   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays < 0) return "Próximo";
+//   if (diffDays < 0) return "Próximo";
+//   if (diffDays === 0 ) return "Hoy";
+//   if (diffDays === 1) return "1 día";
+//   if (diffDays === 2) return "2 días";
+//   if (diffDays === 3) return "3 días";
+//   if (diffDays === 4) return "Último día";
+//   if (diffDays === 5) return "Vencido";
+//   return "Vencido";
+// };
+
+
+// TESTEANDO LA FUNCIÓN CON DISTINTAS FECHAS
+
+const normalizeDate = (date: Date): Date => {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+};  
+
+  export function calculateStatusLabel(createdAt: string): string {
+  let createdAtDate: Date;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(createdAt)) {
+    const [y, m, d] = createdAt.split("-").map(Number);
+    createdAtDate = new Date(y, m - 1, d); 
+  } else {
+    createdAtDate = new Date(createdAt);
+  }
+
+  const today = normalizeDate(new Date());
+  const diffTime = today.getTime() - createdAtDate.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays < 0) return "Hoy";
   if (diffDays === 0) return "Hoy";
-  if (diffDays === 1) return "Hoy";
-  if (diffDays === 2) return "1 día";
-  if (diffDays === 3) return "2 días";
-  if (diffDays === 4) return "3 días";
-  if (diffDays === 5) return "Último día";
+  if (diffDays === 1) return "1 día";
+  if (diffDays === 2) return "2 días";
+  if (diffDays === 3) return "3 días";
+  if (diffDays === 4) return "Último día";
+  if (diffDays === 5) return "Vencido";
   return "Vencido";
-};
+}
 
 const getStatusColor = (status: string): string => {
   switch (status) {
@@ -70,6 +100,29 @@ const getStatusColor = (status: string): string => {
       return "bg-gray-100 text-gray-700";
   }
 };
+
+const testFechas = () => {
+  const hoy = new Date();
+  const simuladas = [
+    new Date(hoy), // Hoy
+    new Date(hoy.getTime() - 1 * 24 * 60 * 60 * 1000), // Ayer
+    new Date(hoy.getTime() - 2 * 24 * 60 * 60 * 1000), // Hace 2 días
+    new Date(hoy.getTime() - 3 * 24 * 60 * 60 * 1000), // Hace 3 días
+    new Date(hoy.getTime() - 4 * 24 * 60 * 60 * 1000), // Hace 4 días
+    new Date(hoy.getTime() - 5 * 24 * 60 * 60 * 1000), // Hace 5 días
+    new Date(hoy.getTime() - 6 * 24 * 60 * 60 * 1000), // Hace 6 días
+    new Date(hoy.getTime() + 1 * 24 * 60 * 60 * 1000), // Mañana
+  ];
+
+  simuladas.forEach((fecha) => {
+    const iso = fecha.toISOString();
+    const label = calculateStatusLabel(iso);
+    console.log(`📅 Fecha: ${iso.split("T")[0]} → Estado: ${label}`);
+  });
+};
+
+testFechas(); // Llama a la función
+
 
 const ProductListPage = () => {
   const [productList, setProductList] = useState<Product[]>([]);
@@ -134,7 +187,7 @@ const ProductListPage = () => {
     try {
       await updateProductInList(selectedProduct.id, {
         quantity: editedQuantity,
-        createdAt: editedDate,
+  createdAt: new Date(editedDate + "T00:00:00").toISOString(),
       });
 
       setProductList((prev) =>

@@ -7,7 +7,7 @@ import {
   object,
   optional,
   string,
-  type InferOutput
+  type InferOutput,
 } from "valibot";
 
 export const DraftProductSchema = object({
@@ -27,29 +27,32 @@ export const ProductSchema = object({
 export const ProductsSchema = array(ProductSchema);
 export type Product = InferOutput<typeof ProductSchema>;
 
-
-
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
-const dateString = custom((value) => {
-  if (typeof value !== 'string') return false;
+const dateString = custom<string>((value) => {
+  if (typeof value !== "string") return false;
   if (!dateRegex.test(value)) return false;
 
   const date = new Date(value);
   return !isNaN(date.getTime());
-}, 'fecha inválida');
+}, "fecha inválida");
 
 export const ProductSchemas = object({
-  name: custom((value) => typeof value === 'string' && value.length > 0, 'nombre inválido'),
+  name: custom(
+    (value) => typeof value === "string" && value.length > 0,
+    "nombre inválido"
+  ),
   expirationDate: dateString,
-  inDisplay: optional(nullable(custom((value) => typeof value === 'boolean', 'debe ser booleano')))
+  inDisplay: optional(
+    nullable(custom((value) => typeof value === "boolean", "debe ser booleano"))
+  ),
 });
 
 export const ProductListSchema = object({
   productId: number(),
-  product: ProductSchemas,
-  quantity: optional(nullable(number())),
-  createdAt: dateString
+  product: ProductSchema,
+  quantity: number(),
+  createdAt: dateString,
 });
 
 export const ProductListsSchema = array(ProductListSchema);
