@@ -20,68 +20,36 @@ interface Product {
 
 const formatDate = (isoDate: string) => {
   const [year, month, day] = isoDate.split("T")[0].split("-").map(Number);
-  const localDate = new Date(year, month - 1, day);
+  const localDate = new Date(year, month, day);
   return localDate.toLocaleDateString("es-ES", {
     day: "numeric",
     month: "short",
   });
 };
 
-// const calculateStatusLabel = (createdAt: string): string => {
-//   const today = new Date();
-//   const createdDate = new Date(createdAt);
-//   const todayMidnight = new Date(
-//     today.getFullYear(),
-//     today.getMonth(),
-//     today.getDate()
-//   );
-//   const createdMidnight = new Date(
-//     createdDate.getFullYear(),
-//     createdDate.getMonth(),
-//     createdDate.getDate()
-//   );
-//   const diffTime = todayMidnight.getTime() - createdMidnight.getTime();
-//   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-//   if (diffDays < 0) return "Próximo";
-//   if (diffDays === 0 ) return "Hoy";
-//   if (diffDays === 1) return "1 día";
-//   if (diffDays === 2) return "2 días";
-//   if (diffDays === 3) return "3 días";
-//   if (diffDays === 4) return "Último día";
-//   if (diffDays === 5) return "Vencido";
-//   return "Vencido";
-// };
-
-
-// TESTEANDO LA FUNCIÓN CON DISTINTAS FECHAS
-
 const normalizeDate = (date: Date): Date => {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-};  
+};
 
-  export function calculateStatusLabel(createdAt: string): string {
-  let createdAtDate: Date;
-  if (/^\d{4}-\d{2}-\d{2}$/.test(createdAt)) {
-    const [y, m, d] = createdAt.split("-").map(Number);
-    createdAtDate = new Date(y, m - 1, d); 
-  } else {
-    createdAtDate = new Date(createdAt);
-  }
-
+export function calculateStatusLabel(createdAt: string): string {
+  const createdDate = new Date(createdAt);
   const today = normalizeDate(new Date());
-  const diffTime = today.getTime() - createdAtDate.getTime();
+  const createdLocal = normalizeDate(createdDate);
+
+  const diffTime = today.getTime() - createdLocal.getTime();
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  
+
   if (diffDays < 0) return "Hoy";
   if (diffDays === 0) return "Hoy";
   if (diffDays === 1) return "1 día";
   if (diffDays === 2) return "2 días";
   if (diffDays === 3) return "3 días";
   if (diffDays === 4) return "Último día";
-  if (diffDays === 5) return "Vencido";
+  if (diffDays >= 5) return "Vencido";
+
   return "Vencido";
 }
+
 
 const getStatusColor = (status: string): string => {
   switch (status) {
@@ -187,7 +155,7 @@ const ProductListPage = () => {
     try {
       await updateProductInList(selectedProduct.id, {
         quantity: editedQuantity,
-  createdAt: new Date(editedDate + "T00:00:00").toISOString(),
+  createdAt: editedDate,
       });
 
       setProductList((prev) =>
