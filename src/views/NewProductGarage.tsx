@@ -16,7 +16,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
     const product = await getProductById(+params.id);
     if (!product) {
       return redirect("/");
-      // throw new Response('', {status: 404, statusText: 'No Founded'})
     }
     return product;
   }
