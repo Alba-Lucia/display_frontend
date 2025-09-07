@@ -4,12 +4,6 @@ import { safeParse } from "valibot";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Obtener todos los productos de la lista
-// export const getProductList = async () => {
-//   const res = await axios.get(`${API_URL}/api/product-list`);
-//   return res.data;
-// };
-
 export const getProductList = async () => {
   const res = await axios.get(`${API_URL}/api/product-list`);
   const result = safeParse(ProductListsSchema, res.data); // ✅ aquí sí funciona

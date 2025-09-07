@@ -17,6 +17,7 @@ export const DraftProductSchema = object({
 export const ProductSchema = object({
   id: number(),
   name: string(),
+  sku: optional(nullable(string())),
   quantity: optional(nullable(number())),
   unit: optional(nullable(string())),
   expirationDate: optional(nullable(string())),
@@ -57,3 +58,18 @@ export const ProductListSchema = object({
 
 export const ProductListsSchema = array(ProductListSchema);
 export type ProductList = InferOutput<typeof ProductListSchema>;
+
+
+export const StockOrderSchema = object({
+  id: number(), // siempre presente
+  name: string(),
+  category: optional(nullable(string())),
+  sku: optional(nullable(string())),
+});
+export const StockOrderSchemas = array(StockOrderSchema);
+
+// Un producto
+export type StockOrder = InferOutput<typeof StockOrderSchema>;
+
+// Lista de productos
+export type StockOrderList = InferOutput<typeof StockOrderSchemas>;

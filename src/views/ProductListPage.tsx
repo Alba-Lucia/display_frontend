@@ -12,6 +12,7 @@ interface Product {
   quantity: number;
   product: {
     id: number;
+    sku: string;
     name: string;
     quantity: number;
     unit: string | null;
@@ -126,7 +127,6 @@ const ProductListPage = () => {
 
   const handleDelete = async (id: number) => {
     if (!window.confirm("¿Eliminar este producto?")) return;
-
     try {
       await axios.delete(`${API_URL}/api/product-list/${id}`);
       setProductList((prev) => prev.filter((item) => item.id !== id));

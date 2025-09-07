@@ -5,6 +5,7 @@ import { getProduct } from "../services/ProductService";
 import type { Product } from "../types";
 import NewProductGarage from "../views/NewProductGarage";
 import { ProductDetailsDisplay } from "../views/ProductDetailsDisplay";
+// import ProductsPageSearchForm from "./ProductsPageSearchForm";
 
 export async function loader() {
   const products = await getProduct();
@@ -53,6 +54,7 @@ const ProductListDisplay = () => {
 
   return (
     <div className=" mx-auto p-4">
+
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Product list display</h2>
         <button

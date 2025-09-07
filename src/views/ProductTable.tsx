@@ -1,6 +1,7 @@
 export type ProductTableItem = {
   id: number;
   name: string;
+  sku: string;
   unit: string;
   date: string;
   status: "expired" | "last_day" | "one_day";

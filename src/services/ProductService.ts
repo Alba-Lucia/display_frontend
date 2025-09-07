@@ -75,6 +75,7 @@ export async function updateProduct(data: ProductData, id: Product["id"]) {
     const result = safeParse(ProductSchema, {
       id: Number(id),
       name: parsedData.name,
+      sku: parsedData.sku,
       quantity: parsedData.quantity ? Number(parsedData.quantity) : null,
       unit: parsedData.unit || null,
       expirationDate: parsedData.expirationDate || null,
@@ -102,4 +103,19 @@ export async function deleteProduct(id: Product["id"]) {
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function fetchProducts(q: string, page: number, pageSize: number) {
+  try {
+    const url = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/products/`,
+      {
+        params: { q, page, pageSize },
+      }
+    );
+    return url.data;
+  } catch (error) {
+    console.log(error);
+  }
+  // { data: rows, page, pageSize, total }
 }
