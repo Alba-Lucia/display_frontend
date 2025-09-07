@@ -14,7 +14,7 @@ import { safeParse } from "valibot";
 // }
 
 // Crear producto
-export const createProduct = async (stockOrder: StockOrder) => {
+export const createProduct = async (stockOrder: Omit<StockOrder, "id">) => {
   const res = await axios.post(
     `${import.meta.env.VITE_API_URL}/api/stockOrder`,
     stockOrder

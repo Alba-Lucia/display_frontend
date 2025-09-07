@@ -39,7 +39,11 @@ export default function StockOrderForm({
 
     if (product) {
       // 🔄 EDITAR
-      const updated = await updateStockOrder(product.id, { name, category, sku });
+      const updated = await updateStockOrder(product.id, {
+        name,
+        category,
+        sku,
+      });
       if (updated && onUpdated) {
         onUpdated();
       }
