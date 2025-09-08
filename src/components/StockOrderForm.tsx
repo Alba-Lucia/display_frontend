@@ -16,13 +16,13 @@ export default function StockOrderForm({
   const [sku, setSku] = useState("");
 
   const categories = [
-    "Barra",
-    "Bebidas",
-    "Cocina",
-    "Chef",
-    "Suministros",
-    "Vegetales",
-    "Pasteleria",
+    "🥐 Bakery & Pastry",
+    "🍵 Drinks",
+    "🍳 Kitchen",
+    "👨‍🍳 Chef",
+    "🧻 Supplies",
+    "🥕 Vegetales",
+    "Otros",
   ];
 
   // Si estamos editando, rellenar campos
