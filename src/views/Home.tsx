@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getProductList } from "../services/productList";
 import type { ProductList } from "../types";
+import StockOrderListForm from "../components/stockOrderListForm";
 
 function normalizeDate(date: Date): Date {
   const d = new Date(date);
@@ -105,6 +106,7 @@ export default function Home() {
           Product List Category
         </Link>
       </div>
+      <StockOrderListForm/>
     </main>
   );
 }

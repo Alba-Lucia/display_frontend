@@ -4,6 +4,7 @@ import { deleteStockOrder, getStockOrder } from "../services/stockOrderServer";
 import { Pencil, Trash2 } from "lucide-react";
 import { Modal } from "../modals/Modal";
 import StockOrderForm from "./StockOrderForm";
+import { addProductToList, getAddedProducts } from "../services/StockOrderAddList";
 
 function StockOrderList({
   refresh,
@@ -15,19 +16,39 @@ function StockOrderList({
   const [products, setProducts] = useState<StockOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState<StockOrder | null>(null);
+  const [addedProducts, setAddedProducts] = useState<number[]>([]);
 
-    const handleCloseModal = () => setEditingProduct(null);
+  const handleCloseModal = () => setEditingProduct(null);
 
+  // useEffect(() => {
+  //   async function fetchProducts() {
+  //     setLoading(true);
+  //     const data = await getStockOrder(); // data es StockOrder[]
+  //     setProducts(data);
+  //     setLoading(false);
+  //   }
+  //   fetchProducts();
+    
+  // }, [refresh]);
 
   useEffect(() => {
-    async function fetchProducts() {
-      setLoading(true);
-      const data = await getStockOrder(); // data es StockOrder[]
-      setProducts(data);
-      setLoading(false);
-    }
-    fetchProducts();
-  }, [refresh]);
+  async function fetchProducts() {
+    setLoading(true);
+    const [allProducts, addedList] = await Promise.all([
+      getStockOrder(),   // todos los productos
+      getAddedProducts() // productos ya agregados en el backend
+    ]);
+
+    setProducts(allProducts);
+
+    // Guardar en estado los IDs de los productos ya añadidos
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setAddedProducts(addedList.map((item: any) => item.productId));
+
+    setLoading(false);
+  }
+  fetchProducts();
+}, [refresh]);
 
   if (loading) return <p>Cargando productos...</p>;
 
@@ -49,6 +70,24 @@ function StockOrderList({
     }
   };
 
+  const handleAddToList = async (productId: number, name: string) => {
+  const qty = Number(prompt(`Cantidad para ${name}:`, "1"));
+  if (!qty || qty <= 0) return;
+
+  try {
+    await addProductToList({ productId, quantity: qty });
+
+    // Actualizar estado en memoria
+    setAddedProducts((prev) => [...prev, productId]);
+
+    alert(`${name} añadido a la lista ✅`);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    alert("Error al añadir producto");
+  }
+};
+
+
   return (
     <div>
       <h1 className="text-2xl font-bold">📦 Lista de productos</h1>
@@ -63,7 +102,11 @@ function StockOrderList({
                 {items.map((prod) => (
                   <li
                     key={prod.id}
-                    className="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-2 shadow-sm hover:shadow transition m-2"
+                    className={`flex items-center justify-between border rounded-lg px-4 py-2 shadow-sm m-2 transition ${
+                      addedProducts.includes(prod.id)
+                        ? "bg-blue-100 border-blue-400"
+                        : "bg-white border-gray-200 hover:shadow"
+                    }`}
                   >
                     <p>
                       <strong>{prod.name}</strong>
@@ -94,8 +137,17 @@ function StockOrderList({
                           className="w-4 h-4 text-red-500"
                         />
                       </button>
-                      <button className="ml-2 px-3 py-1.5 text-xs font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-100 transition">
-                        Add to list
+                      <button
+                        onClick={() => handleAddToList(prod.id, prod.name)}
+                        className={`ml-2 px-3 py-1.5 text-xs font-medium border rounded transition ${
+                          addedProducts.includes(prod.id)
+                            ? "bg-blue-500 text-white border-blue-600"
+                            : "text-gray-700 border-gray-300 hover:bg-gray-100"
+                        }`}
+                      >
+                        {addedProducts.includes(prod.id)
+                          ? "Added ✅"
+                          : "Add to list"}
                       </button>
                     </div>{" "}
                   </li>

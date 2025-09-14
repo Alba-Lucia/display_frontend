@@ -14,8 +14,9 @@ import NewProductGarage, {
 } from "./views/NewProductGarage";
 import { action as deleteProductAction } from "./views/ProductDetailsDisplay";
 import { ProductListCategory } from "./views/ProductListCategory";
-import { ViewOrdenList } from "./views/ViewOrdenList";
 import ProductListPage from "./views/ProductListPage";
+import StockOrderListPage from "./views/StockOrderListPage";
+import { ViewOrdenList } from "./views/ViewOrdenList";
 
 export const router = createBrowserRouter([
   {
@@ -59,6 +60,10 @@ export const router = createBrowserRouter([
       {
         path: "viewOrdenList",
         element: <ViewOrdenList />,
+      },
+       {
+        path: "stockOrderListPage",
+        element: <StockOrderListPage />,
       },
     ],
   },

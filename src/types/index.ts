@@ -66,10 +66,27 @@ export const StockOrderSchema = object({
   category: optional(nullable(string())),
   sku: optional(nullable(string())),
 });
-export const StockOrderSchemas = array(StockOrderSchema);
 
+export const StockOrderSchemas = array(StockOrderSchema);
 // Un producto
 export type StockOrder = InferOutput<typeof StockOrderSchema>;
-
 // Lista de productos
 export type StockOrderList = InferOutput<typeof StockOrderSchemas>;
+
+
+// Schema de un producto
+export const StockOrderAddListSchema = object({
+  productId: number(),
+  quantity: number(),
+  listDate: string(),
+  created: boolean(),
+});
+
+// Schema de lista de productos
+export const StockOrderAddListSchemas = array(StockOrderAddListSchema);
+
+// Un producto
+export type StockOrderAddList = InferOutput<typeof StockOrderAddListSchema>;
+
+// Lista de productos
+export type StockOrderAddLists = InferOutput<typeof StockOrderAddListSchemas>;

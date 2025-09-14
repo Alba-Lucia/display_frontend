@@ -27,7 +27,7 @@ export const ProductListCategory = () => {
         </button>
 
         <Link
-          to="/viewOrdenList"
+          to="/stockOrderListPage"
           className="flex items-center justify-between border px-3 py-1.5 rounded text-gray-800 w-[35%] hover:bg-gray-100"
         >
           View order list
