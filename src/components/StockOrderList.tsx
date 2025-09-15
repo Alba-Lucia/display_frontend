@@ -20,17 +20,6 @@ function StockOrderList({
 
   const handleCloseModal = () => setEditingProduct(null);
 
-  // useEffect(() => {
-  //   async function fetchProducts() {
-  //     setLoading(true);
-  //     const data = await getStockOrder(); // data es StockOrder[]
-  //     setProducts(data);
-  //     setLoading(false);
-  //   }
-  //   fetchProducts();
-    
-  // }, [refresh]);
-
   useEffect(() => {
   async function fetchProducts() {
     setLoading(true);
